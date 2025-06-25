@@ -31,7 +31,7 @@ const Chatbot = () => {
       setLoading(true);
 
       try {
-        const res = await axios.post("https://bricky-chatbot.onrender.com/api/ask-question", {
+        const res = await axios.post("http://localhost:5000/api/ask-question", {
           query: userMessage,
         });
 
@@ -96,7 +96,7 @@ const Chatbot = () => {
           
           </div>
           <div className="sidebar-footer">
-            <p>Powered by AI Construction Knowledge</p>
+            <p>Powered by Claude AI & Knowledge Base</p>
           </div>
         </div>
 
@@ -116,9 +116,13 @@ const Chatbot = () => {
                     <span className="message-source">
                       {msg.source === "kb"
                         ? "📚 Knowledge Base"
-                        : msg.source === "openai"
-                          ? "🤖 AI Generated"
-                          : ""}
+                        : msg.source === "claude"
+                          ? "🧠 Claude AI"
+                          : msg.source === "openai"
+                            ? "🤖 OpenAI"
+                            : msg.source === "error"
+                              ? "⚠️ Error"
+                              : "🤖 AI Generated"}
                     </span>
                   )}
                 </div>
