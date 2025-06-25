@@ -4,6 +4,7 @@ import botAnimation from "../assets/bot.json";
 import "../styles/chatbot.css";
 import axios from "axios";
 import { FiSend, FiMenu, FiX } from "react-icons/fi";
+import PopUp from "./PopUp";
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([
@@ -67,7 +68,7 @@ const Chatbot = () => {
 
   return (
     <div className="chatbot-app">
-      {/* Mobile Header */}
+          <PopUp></PopUp>
       <div className="mobile-header">
         <button className="menu-button" onClick={toggleMobileMenu}>
           {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
