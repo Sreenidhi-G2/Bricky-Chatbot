@@ -31,7 +31,7 @@ const Chatbot = () => {
       setLoading(true);
 
       try {
-        const res = await axios.post("http://localhost:5000/api/ask-question", {
+        const res = await axios.post("https://bricky-chatbot.onrender.com/api/ask-question", {
           query: userMessage,
         });
 
