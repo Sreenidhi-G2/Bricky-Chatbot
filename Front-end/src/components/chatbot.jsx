@@ -4,7 +4,7 @@ import botAnimation from "../assets/bot.json";
 import "../styles/chatbot.css";
 import axios from "axios";
 import { FiSend, FiMenu, FiX } from "react-icons/fi";
-import PopUp from "./PopUp";
+
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([
@@ -32,7 +32,7 @@ const Chatbot = () => {
       setLoading(true);
 
       try {
-        const res = await axios.post("https://bricky-chatbot.onrender.com/api/ask-question", {
+        const res = await axios.post("http://35.154.146.220:5000/api/ask-question", {
           query: userMessage,
         });
 
@@ -68,7 +68,6 @@ const Chatbot = () => {
 
   return (
     <div className="chatbot-app">
-          <PopUp></PopUp>
       <div className="mobile-header">
         <button className="menu-button" onClick={toggleMobileMenu}>
           {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
