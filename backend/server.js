@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -15,12 +14,7 @@ app.use(express.json());
 app.use('/api', chatbotRoutes);
 
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => console.log("MongoDB atlas  connected"))
-  .catch(err => console.error("MongoDB error:", err));
+
   
 
   

@@ -32,7 +32,7 @@ const Chatbot = () => {
       setLoading(true);
 
       try {
-        const res = await axios.post("http://35.154.146.220:5000/api/ask-question", {
+        const res = await axios.post("http://localhost:5000/api/ask-question", {
           query: userMessage,
         });
 

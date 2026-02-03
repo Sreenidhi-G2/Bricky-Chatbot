@@ -1,25 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const KnowledgeBase = require("../models/KnowledgeBase");
 const axios = require("axios");
 require("dotenv").config();
-
-/**
- * Utility: Check if the query is construction-related
- */
-const isConstructionRelated = (query) => {
-  const keywords = [
-    "construction", "building", "cement", "brick", "concrete",
-    "masonry", "architecture", "civil engineering", "foundation",
-    "plaster", "painting", "rebar", "steel", "contractor",
-    "site", "scaffolding", "safety", "construction law", "construction material",
-    "building code", "electrical", "plumbing", "roofing", "tiles", "surveying",
-    "blueprint", "interior design", "flooring", "estimate", "labor", "site plan",
-    "contract", "mortar", "aggregate", "beam", "column", "slab"
-  ];
-
-  return keywords.some(word => query.toLowerCase().includes(word));
-};
 
 router.post("/ask-question", async (req, res) => {
   const { query } = req.body;
@@ -31,33 +13,6 @@ router.post("/ask-question", async (req, res) => {
   try {
     console.log("Incoming query:", query);
 
-    // ✅ 1. Hard filter before calling Claude
-    if (!isConstructionRelated(query)) {
-      console.log("❌ Query rejected (not construction-related)");
-      return res.json({
-        answer:
-          "I'm designed to answer only construction-related questions. Please ask me something about building, materials, or project work.",
-        source: "filter",
-      });
-    }
-
-    // ✅ 2. Search local KnowledgeBase first
-    const keywordsFromQuery = query.toLowerCase().split(/\s+/);
-    const result = await KnowledgeBase.findOne({
-      $or: [
-        { question: { $regex: query, $options: "i" } },
-        { keywords: { $in: keywordsFromQuery } },
-      ],
-    });
-
-    if (result) {
-      console.log("Matched Entry from DB:", result);
-      return res.json({ answer: result.answer, source: "kb" });
-    }
-
-    console.log("No match found in DB. Falling back to Claude...");
-
-    // ✅ 3. Claude fallback (reinforced prompt)
     if (!process.env.OPENROUTER_API_KEY) {
       console.error("OPENROUTER_API_KEY is not set");
       return res.status(500).json({
@@ -73,15 +28,14 @@ router.post("/ask-question", async (req, res) => {
         messages: [
           {
             role: "system",
-            content: `You are Bricky, a professional construction assistant.
+            content: `You are Bricky, a friendly and knowledgeable construction assistant. Your primary expertise is in construction, civil engineering, architecture, and building materials.
 
-IMPORTANT:
-You are allowed to talk ONLY about topics directly related to construction, civil engineering, architecture, or building materials.
+You should:
+- Strictly Answer only construction-related questions thoroughly and accurately.
+- Handle normal conversational interactions naturally (greetings, small talk, thank yous, etc.).
+- If a user asks something completely unrelated to construction DO NOT ANSWER, WE CANNOT AFFORD TO answer the questions apart from Construction, STRICTLY DO NOT ANSWER politely let them know your main focus is construction.
 
-If the user asks about anything else (e.g., celebrities, sports, technology, general knowledge, etc.), you MUST respond exactly with this:
-"I'm designed to answer only construction-related questions. Please ask me something about building, materials, or project work."
-
-Never provide information outside the construction domain.`
+Keep your tone helpful, approachable, and professional.`,
           },
           { role: "user", content: query },
         ],
